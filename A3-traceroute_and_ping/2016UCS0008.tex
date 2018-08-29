@@ -1,0 +1,141 @@
+\documentclass[]{report}
+\usepackage{graphicx, float}
+\usepackage[export]{adjustbox}
+
+\title{\centering CSP334 : Computer Networks \\Lab Assignment No 3\\Assignment on traceroute, ping commands}
+\author{\LARGE Sahil\\2016UCS0008}
+
+% to use proper section numbering in the report type 
+\renewcommand{\thesection}{\arabic{section}}
+
+\begin{document}
+
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Working of \textit{traceroute}:}
+\textbf{Brief explanation of its working}: 
+\\ 
+It works by sending packets with TTL values starting from 1 onwards. The packet with TTL 1 reaches the first router, which then responds with ICMP TTL exceeded message, and at the source, its IP address is known from this response packet. Similarly, the packet with TTL 2 reaches the next router, and the process repeats till destination IP is reached or maximum limit of TTL packets has been sent and time out occurs. 
+
+\subsection{If there were no TTL field in the invocation of the \textit{traceroute} at all:}
+then we cannot identify the routers in between the source and destination, as the packet would return back only if it reaches the destination or if the TTL value becomes 1 at some point.
+
+\subsection{Routers determine whether the TTL value limit has reached:} 
+by decrementing the value of the TTL by $1$ as soon as it  reaches the router, so whenever a router gets a packet with a TTL value of $1$, it knows that the TTL value limit has been reached.
+
+\subsection{Intermediate route receiving a packet with ICMP TTL exceeded message: }
+should not respond again as it already contains TTL exceeded message sent by another router whose IP address should be made available to the source. 
+
+\subsection{\textit{traceroute} makes use of destination UDP port number which is invalid} 
+so that when it reaches the destination, the connection cannot be established and an error message is returned as the response. Morever, it helps in distinguishing that the destination has reached since previous responses would be ICMP TTL exceeded, so the INVALID UDP PORT message identifies that we have reached the destination.
+
+\subsection{Address of all the routers in between us and destination}
+is known as the command sends packets with different TTL values starting from 1 to some maximum value, so the one with value of 1 reaches the first router and then router responds with TTL exceeded message, so it sends along its IP address which is thus known at the source. Similarly, IPA of all the routers in between is known. 
+
+\subsection{\textit{traceroute} latency}
+is calculated in terms of the \textbf{round trip time}. When the packet is sent from source, a time stamp is put indicating the start time, so after reaching the router which sends a ICMP TTL exceeded message, when the message arrives at the source, the current time is noted, so the difference of the times is the RTT.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem 2:  Executing \textit{traceroute} command: }
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 350pt, keepaspectratio]{Snapshots/exe2/exe2_2.png}
+\end{figure}
+
+\subsection{IPA of \textit{www.yahoo.com}}
+The IPA obtained from traceroute is : \textbf{$98.137.246.7$}
+
+\subsection{No. of iterations to determine the route is:} $22$
+
+\subsection{IPA of all the machines between source and destination are: }
+\begin{itemize}
+	\item $10.10.40.1$
+	\item $10.10.10.10$
+	\item $10.119.231.165$
+	\item $10.148.6.81$
+	\item $10.255.238.69$
+	\item $10.255.238.189$
+	\item $10.152.7.38$
+	\item $115.248.54.102$
+	\item $115.255.239.54$
+	\item $62.216.147.73$
+	\item $85.95.27.122$
+	\item $85.95.27.194$
+	\item $195.66.224.129$
+	\item $216.115.100.26$
+	\item $216.115.96.7$
+	\item $184.165.16.49$
+	\item $216.115.96.207$
+	\item $216.115.96.204$
+	\item $66.196.67.99$
+	\item $67.195.37.95$
+	\item $98.137.120.6$
+	\item $98.137.246.7$
+\end{itemize}
+
+\subsection{Avg. Round trip time of the packet that reached the destination is:}
+$403.38$ milli seconds
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem 3: \textit{traceroute} and \textit{tcpdump}}
+\textit{\$ sudo tcpdump -n -v udp -c 10} command is run in one window and 
+\\
+ \textit{\$ traceroute www.yahoo.com} command is run then. The output is shown in the figure. 
+
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 250pt, keepaspectratio]{Snapshots/exe3/q3_1.png}
+\end{figure}
+
+\subsection{Packets sent in one iteration:}
+\textit{traceroute} sends $3$ packets in $1$ iteration. This is proved from the above figure, as highlighted, there are 3 packets for each TTL value starting from 1.
+
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 250pt, keepaspectratio]{Snapshots/exe3/q3_2.png}
+\end{figure}
+
+\subsection{Round trip time:}
+For one specific iteration (consider $14^{th}$), individual RTT's of the three probes are: $290.623$ms, $275.686$ms, $340.415$ms. The avg. RTT is: $302.24$ms. Comparing it with the individual RTT's, there is a lot of deviation. This is because the RTT depends on the forward path as well as the reverse path, thus, there may be some delays in the reverse path in the 3rd packet, as its RTT is lot higher than the other 2. 
+
+\subsection{Port numbers used:}
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 250pt, keepaspectratio]{Snapshots/exe3/q3_3.png}
+\end{figure}
+
+For each iteration, it uses different port numbers for the destination. As in the above figure, for TTL 21, port numbers used are: 33496, 33497 whereas for TTL 22, port numbers 33498,  33499, 33500 are used.  This might be because simultaneously packets might come to the destination at the same port otherwise. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem 4: Visual \textit{traceroute}}
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 350pt, keepaspectratio]{Snapshots/exe4/q4_1.png}
+\end{figure}
+
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 200pt, keepaspectratio]{Snapshots/exe4/q4_2.png}
+\end{figure}
+
+\begin{itemize}
+	\item Source IP address: $52.95.36.81$
+	\item Destination IP address: $98.138.219.231$
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem 5: Knowing whether firewall has come in the way}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem 6: Last IP address in \textit{traceroute}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem 7: Usages of the \textit{ping} program}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem 8: Using ping to simulate the working of \textit{traceroute}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem 9: Approaches that can be used to do a \textit{ping sweep}}
+
+\end{document}
