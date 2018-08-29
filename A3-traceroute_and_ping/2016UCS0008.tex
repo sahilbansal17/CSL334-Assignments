@@ -125,17 +125,44 @@ For each iteration, it uses different port numbers for the destination. As in th
 \end{itemize}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Problem 5: Knowing whether firewall has come in the way}
+We can know that a firewall has come into way and stopped the packet, if we are unable to reach to the destination while using the traceroute command. As seen in the figure below, * * * starts appearing in the output.
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 200pt, keepaspectratio]{Snapshots/exe5/q5_1.png}
+\end{figure}
+
+But, when the same \textit{traceroute} command is used with \textbf{-I} option, i.e. sending ICMP requests only, we get the complete output: 
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 200pt, keepaspectratio]{Snapshots/exe5/q5_2.png}
+\end{figure}
+Thus, the IP address of the firewall is based on the destination IP address as the last few IP addresses are similar in the above output.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Problem 6: Last IP address in \textit{traceroute}}
+If a firewall has not obstructured the packet sent, the last IP address appearing in the \textit{traceroute} must indicate the IP address of the destination as traceroute command terminates when it receives UDP Port INVALID response from the destination IP. In the above figure shown for problem 5, clearly the IPA of destination matches the last IPA.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Problem 7: Usages of the \textit{ping} program}
-
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 150pt, keepaspectratio]{Snapshots/exe7/q7_1.png}
+\end{figure} 
+\begin{itemize}
+	\item Ping is mainly used to check whether a machine is connected to the network. It also displays the round trip times. As in the figure shown above, the second ping command is unable to resolve the host as the machine is not connected to the network.
+	\item It can be used to know the maximum frame size of message allowed by the Network Interface Card. 
+	\item It can be used to identify the presence of a firewall as some good firewalls block time stamp requests and source routed packets. 
+\end{itemize}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Problem 8: Using ping to simulate the working of \textit{traceroute}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Problem 9: Approaches that can be used to do a \textit{ping sweep}}
-
+Ping sweep is used to find which range of IP addresses are active on a host. The various methods to do ping sweep are:
+\begin{itemize}
+	\item \textbf{nmap:}
+	\item \textbf{fping:}
+	\item \textbf{nmap using TCP:}
+	\item \textbf{bash for loop:}
+\end{itemize}
 \end{document}
