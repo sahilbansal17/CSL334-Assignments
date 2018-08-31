@@ -150,19 +150,59 @@ If a firewall has not obstructured the packet sent, the last IP address appearin
 \end{figure} 
 \begin{itemize}
 	\item Ping is mainly used to check whether a machine is connected to the network. It also displays the round trip times. As in the figure shown above, the second ping command is unable to resolve the host as the machine is not connected to the network.
-	\item It can be used to know the maximum frame size of message allowed by the Network Interface Card. 
+	\begin{figure}[H]
+		\vspace{0pt}
+		\includegraphics[height = 400pt, keepaspectratio]{Snapshots/exe7/q7_2.png}
+	\end{figure} 
+	\item It can be used to know the maximum frame size of message allowed by the Network Interface Card. As in the figure shown above, the \textbf{-D} option is used to set the \textbf{don't fragment} bit and \textbf{-s} option is used to specify the size of the packet, so we get the reply \textbf{Message too long}, if the size exceeds the maximum allowed message size. 
+	\\
+	We can see from the first 3 commands in above figure, that the maximum size allowed is 1472, this is because after adding the headers at the link layer (8 bytes) and network layer (28 bytes), the size becomes 1500 which is the default maximum allowed size. 
+	\\
+	Also, it allows sending any size packet to the localhost since it is the same machine, and also adds only 8 bytes of header (link layer), since there is no need of network layer in this case. 
 	\item It can be used to identify the presence of a firewall as some good firewalls block time stamp requests and source routed packets. 
 \end{itemize}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Problem 8: Using ping to simulate the working of \textit{traceroute}}
+A file named \textbf{ping\_as\_traceroute} is created which contains the shell srcipt to use \textit{ping} as \textit{traceroute}. It is displayed below:
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 50pt, keepaspectratio]{Snapshots/exe8/q8_1.png}
+\end{figure} 
+The \textbf{-m} option is used to send packet with a specific TTL value, and -c option is used to send a particular no. of packets. So for all TTL values from $1$ to $30$, we send a single packet, and in response we get the IPA of all the routers in between the source (our machine) and the destination. This value $30$ can be large if we reach the destination in first few iterations only, so it is just a maximum value chosen for convenience, we can adjust it by hit and trial.
+\\
+The ouptut received is displayed in the following figure:
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 400pt, keepaspectratio]{Snapshots/exe8/q8_2.png}
+\end{figure} 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Problem 9: Approaches that can be used to do a \textit{ping sweep}}
-Ping sweep is used to find which range of IP addresses are active on a host. The various methods to do ping sweep are:
+Ping sweep is used to find which range of IP addresses are active on a host. It sends multiple ICMP requests to multiple hosts. If the given address is live, the response is received. The various methods to do ping sweep are:
 \begin{itemize}
-	\item \textbf{nmap:}
+  	\item \textbf{nmap:}
+	nmap is a tool for generally used for port scanning. The \textbf{-sP} option can be used with it to do ping sweeping. The range of IPA can then be specified. It then works similar to ping my sending ICMP requests and waiting for a response before sending the next packet to the next host. 
+	\begin{figure}[H]
+		\vspace{0pt}
+		\includegraphics[height = 300pt, keepaspectratio]{Snapshots/exe9/q9_1.png}
+	\end{figure}
 	\item \textbf{fping:}
+	It works a little differently than ping sending multiple ICMP requests at the same time and not waiting for the respons before sending the next one. As seen in the output below the result for $172.217.167.1$ is arrived before $172.217.167.0$. This proves it. The \textbf{-g} option is used to specify the start and the end IPA for the ping sweep. 
+	\begin{figure}[H]
+		\vspace{0pt}
+		\includegraphics[height = 150pt, keepaspectratio]{Snapshots/exe9/q9_3.png}
+	\end{figure}  
 	\item \textbf{nmap using TCP:}
+	nmap can also be used to do ping sweep by sending TCP requests instead of ICMP requests. The \textbf{-PT} option can be used followed by the port number without any space to specify the port number on which to send the request. As seen in the below output, the host is alive only when sending a request on port 80 since that is the standard HTTP port and we are doing ping on google, so it doesn't respond on other ports. 
+	\begin{figure}[H]
+		\vspace{0pt}
+		\includegraphics[height = 300pt, keepaspectratio]{Snapshots/exe9/q9_2.png}
+	\end{figure}  
 	\item \textbf{bash for loop:}
+	We can write a for loop for doing a ping sweep by running ping to different address each time. As in the below output, we ping all IP addresses from $172.217.167.0 - 172.217.167.10$. 
+	\begin{figure}[H]
+		\vspace{0pt}
+		\includegraphics[height = 200pt, keepaspectratio]{Snapshots/exe9/q9_4.png}
+	\end{figure}  
 \end{itemize}
 \end{document}
