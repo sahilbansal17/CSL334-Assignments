@@ -62,7 +62,7 @@ Another alternative way is to look at the following \textbf{DNS} packet captured
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Class of IPA:}
-
+IPA of \textbf{source} belongs to \textbf{class A} since class A contains IPA from $0.0.0.0$ to $127.255.255.255$ whereas the IPA of \textbf{destination} belongs to \textbf{class B} since class B contains IPA from $128.0.0.0$ to $191.255.255.255$. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Frame: Information about packet}
@@ -94,12 +94,11 @@ The HTTP GET message sent and the HTTP OK reply are highlighted, the time taken 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{HTTP GET and OK messages:}
-The HTTP GET and OK messages are as shown below:
 \begin{figure}[H]
 	\vspace{0pt}
 	\includegraphics[height = 135pt, keepaspectratio]{Snapshots/q10.png}
 \end{figure}
-
+The HTTP GET and OK messages are as shown above.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Destination physical address of the first packet captured and device it belongs to:}
 \begin{figure}[H]
@@ -110,8 +109,23 @@ The destination physical address of the first packet (HTTP) captured is \textbf{
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Bytes of header in the first frame:}
-
-
+The bytes of header in the first frame is the sum of bytes of header at the different layers. This is not directly visible, but we have to add the \textbf{Header length} field values for the Ethernet, IP and transport layers. \\ \\ \\
+\textbf{Ethernet Header:} Size = 6 + 6 + 2 = 14 bytes for the 3 fields shown.
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 105pt, keepaspectratio]{Snapshots/q12_ethernet.png}
+\end{figure}
+\textbf{IP Header:} Size = 20 bytes 
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 135pt, keepaspectratio]{Snapshots/q12_ip.png}
+\end{figure}
+\textbf{TCP Header:} Size = 32 bytes
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 135pt, keepaspectratio]{Snapshots/q12_tcp.png}
+\end{figure}
+Thus, total bytes of header = 14 + 20 + 32 = 66 bytes
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{How to know if Ethernet header contains an IP packet?}
 
@@ -123,12 +137,17 @@ We can determine by looking at the Ethernet header of the frame whether it conta
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{How to know if the first packet captured has TCP or UDP as transport protocol by looking at the IP header?}
-We can know whether the packet captured has TCP or UDP as transport protocol by looking at the \textbf{Protocol} field in the IP header. If we consider DNS as the first packet captured, it has UDP whereas considering HTTP as the first packet, it has TCP. 
+We can know whether the packet captured has TCP or UDP as transport protocol by looking at the \textbf{Protocol} field in the IP header. If we consider DNS as the first packet captured, it has UDP whereas considering HTTP as the first packet, it has TCP. \\ \\
+\textbf{DNS packet:}
 \begin{figure}[H]
 	\vspace{0pt}
-	\includegraphics[height = 135pt, keepaspectratio]{Snapshots/q14.png}
+	\includegraphics[height = 135pt, keepaspectratio]{Snapshots/q14_1.png}
 \end{figure}
-
+\textbf{HTTP packet:}
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 135pt, keepaspectratio]{Snapshots/q14_2.png}
+\end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Source and destination ports in the SYN, ACK:}
 
@@ -137,20 +156,24 @@ We can know whether the packet captured has TCP or UDP as transport protocol by 
 	\includegraphics[height = 145pt, keepaspectratio]{Snapshots/q15.png}
 \end{figure}
 
+In the SYN, ACK message, the source port is 80 and the destination port is 49434 as shown above. It has to be a well-known port for the server which is source here since client first sent a SYN in response to which server sends a SYN, ACK message. It cannot be the same for the client since client sends a request from ephemeral port number. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Server Hello message has 1 as relative sequence number and 185 as relative acknowledgement number:}
-
+Initially, the sequence number starts from 0 when the client requests a connection, and when the connection has been setup, the next packet from client has a relative sequence number of 1, this is incremented each time a new request is made. The acknowledgement number is 433 as shown, 
 \begin{figure}[H]
 	\vspace{0pt}
-	\includegraphics[height = 105pt, keepaspectratio]{Snapshots/q16.png}
+	\includegraphics[height = 105pt, keepaspectratio]{Snapshots/q16_1.png}
 \end{figure}
-
+This is because the request sent from the client had a TCP header length of 432 bits, so the acknowledgement number for the request is (size of request) + 1.
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 105pt, keepaspectratio]{Snapshots/q16_2.png}
+\end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{First sequence number sent by the server to the client:}
-
 \begin{figure}[H]
 	\vspace{0pt}
 	\includegraphics[height = 230pt, keepaspectratio]{Snapshots/q17.png}
 \end{figure}
-
+The first sequence number sent by the server to the client is not 0 because intially the client sends a random sequence number which then is incremented by the server to 1 and sent to the client along with an acknowledgement. \\ Also, it would have been shown as 0 if we viewed relative sequence numbers since wireshark starts the sequence numbers from 0 in relative ordering. 
 \end{document}
