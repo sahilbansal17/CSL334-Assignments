@@ -164,7 +164,7 @@ Initially, the sequence number starts from 0 when the client requests a connecti
 	\vspace{0pt}
 	\includegraphics[height = 105pt, keepaspectratio]{Snapshots/q16_1.png}
 \end{figure}
-This is because the request sent from the client had a TCP header length of 432 bits, so the acknowledgement number for the request is (size of request) + 1.
+This is because the request sent from the client had a TCP message (header + payload) of size 432 bits, so the acknowledgement number for the request is (size of request) + 1.
 \begin{figure}[H]
 	\vspace{0pt}
 	\includegraphics[height = 105pt, keepaspectratio]{Snapshots/q16_2.png}
@@ -175,5 +175,5 @@ This is because the request sent from the client had a TCP header length of 432 
 	\vspace{0pt}
 	\includegraphics[height = 230pt, keepaspectratio]{Snapshots/q17.png}
 \end{figure}
-The first sequence number sent by the server to the client is not 0 because intially the client sends a random sequence number which then is incremented by the server to 1 and sent to the client along with an acknowledgement. \\ Also, it would have been shown as 0 if we viewed relative sequence numbers since wireshark starts the sequence numbers from 0 in relative ordering. 
+The first sequence number sent by the server to the client is not 0 because intially the client sends a random sequence number which then is incremented by the server by 1 and sent to the client along with an acknowledgement. \\ Also, it would have been shown as 0 if we viewed relative sequence numbers since wireshark starts the sequence numbers from 0 in relative ordering. 
 \end{document}
