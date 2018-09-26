@@ -175,7 +175,7 @@ Yes, now we can see an \textbf{IF-MODIFIED-SINCE} header in the HTTP GET request
 	\vspace{0pt}
 	\includegraphics[height = 170pt, keepaspectratio]{Snapshots/q2/2_4.png}
 \end{figure}
-The status code is \textbf{304} and the response phrase is \textbf{Not Modified} in response to the 2nd HTTP GET request. The server did not explicitly return the content of the file this time since there is no content length header visible, as well as no content visible after two cr-lf present after the Date Header. \\
+The status code is \textbf{304} and the response phrase is \textbf{Not Modified} in response to the 2nd HTTP GET request. The server did not explicitly return the content of the file this time. We can say so by looking at the packet as there is no content length header visible, as well as no content visible after two cr-lf present after the Date Header. \\
 This happens because the client sent an IF-MODIFIED GET request, in which the server responds with the content only when the file has been modified on the server after the date of previous entry of the file in the cache accessbile by client. Otherwise, it just sends a 304-Not Modified response. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -192,7 +192,7 @@ This happens because the client sent an IF-MODIFIED GET request, in which the se
 \end{figure}
 The browser sent 2 HTTP GET requests, one for the pdf file and other for the large text file since both requests were made in the same wireshark session. Both the requests are highlighted above. The packet numbers $624$ and $4001$ in the trace contain the HTTP GET message. 
 \subsection{Packet no in trace containing the status code and phrase associated with the response to the HTTP GET request:}
-We receive \textit{TCP Continuation} message for the large text file requested, as shown by packet no. $637$ highlighted in black above. A \textbf{200 OK} response is received for the pdf file requested as shown below. The response is the packet no. $4001$ in the above trace.
+We receive \textit{TCP Continuation} message for the large text file requested, as shown by packet no. $637$ highlighted in black above. A \textbf{200 OK} response is received for the pdf file requested as shown below. The response is the packet no. $7342$ in the above trace.
 \begin{figure}[H]
 	\vspace{0pt}
 	\includegraphics[height = 170pt, keepaspectratio]{Snapshots/q3/3_3.png}
@@ -204,7 +204,7 @@ The status code is \textbf{200} and the response phrase is \textbf{OK}.
 	\vspace{0pt}
 	\includegraphics[height = 170pt, keepaspectratio]{Snapshots/q3/3_4.png}
 \end{figure}
-In total, there are $131$ HTTP packets were displayed, as shown in bottom right corner here, out of which 2 packets are for the pdf file, whereas in the remaining $129$ packets, $1$ is for the GET request and $1$ is for the HTTP response, so, in total $127$ data containing TCP segments were needed to carry the text of the file. 
+In total, $131$ HTTP packets were displayed, as shown in bottom right corner here, out of which 2 packets are for the pdf file, whereas in the remaining $129$ packets, $1$ is for the GET request and $1$ is for the HTTP response, so, in total $127$ data containing TCP segments were needed to carry the text of the file. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -214,7 +214,7 @@ In total, there are $131$ HTTP packets were displayed, as shown in bottom right 
 	\includegraphics[height = 100pt, keepaspectratio]{Snapshots/q4/4.png}
 \end{figure}
 \subsection{Method used in the HTTP message:}
-GET method is used to get the simple5.php file whereas POST method is also used to send the input taken from user to the server.
+GET method is used to get the simple5.php file whereas POST method is used to send the input taken from user to the server.
 \subsection{No. of HTTP request messages sent by the browser:}
 Total 3 HTTP request messages are sent by the browser.
 \subsection{IPA to which the requests are sent:}
