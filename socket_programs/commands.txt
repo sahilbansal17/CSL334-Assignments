@@ -1,0 +1,49 @@
+    1  netstat -a
+    2  netstat -a | grep daytime
+    3  ss -aep |grep 9339
+    4  ss -aep |grep 80
+    5  cd ~/Desktop/
+    6  ls
+    7  clear
+    8  mkdir csl334
+    9  cd csl334/
+   10  mkdir socket_programs
+   11  cd socket_programs/
+   12  vim tcp_echo_hello_serv1.c
+   13  gcc tcp_echo_hello_serv1.c -o tcpechohelloserv1
+   14  vim tcp_echo_hello_serv1.c
+   15  gcc tcp_echo_hello_serv1.c -o tcpechohelloserv1
+   16  ./tcpechohelloserv1 
+   17  ./tcpechohelloserv1 &
+   18  netstat -a |grep tcpecho
+   19  ps -af| grep tcpecho
+   20  vim tcpechocli1.c
+   21  gcc tcpechocli1.c -o tcpcli1
+   22  vim tcpechocli1.c
+   23  gcc tcpechocli1.c -o tcpcli1
+   24  ls
+   25  ./tcpcli1 
+   26  ./tcpcli1 localhost
+   27  vim tcpechocli2.c
+   28  gcc tcpechocli2.c -o tcpcli2
+   29  ./tcpcli2 
+   30  ./tcpcli2 localhost
+   31  ls
+   32  vim tcpechocli2.c
+   33  gcc tcpechocli2.c -o tcpcli2
+   34  ./tcpcli2 localhost
+   35  ./tcpcli2
+   36  netstat -a | grep 9339
+   37  ps -aux | grep 9339
+   38  ps -aux | grep tcpechohello
+   39  ps -ax | grep tcpechohello
+   40  ps -af | grep tcpechohello
+   41  kill -9 3459
+   42  ps -af | grep tcpechohello
+   43  ./tcpechohelloserv1 &
+   44  ss -aep | grep 9339
+   45  man ss
+   46  ps -af | grep tcpechohello
+   47  kill -9 3709
+   48  ps -af | grep tcpechohello
+   49  history > hist.txt
