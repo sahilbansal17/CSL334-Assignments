@@ -27,11 +27,16 @@ void populate_ipaddr(char *ip, struct sockaddr_in * serv_addr) {
 }
 
 // function to convert and display the IPA and port no. to Network Byte Order
-void convert_to_NBO(struct sockaddr_in serv_addr) {
-	uint16_t port_no = htons(serv_addr.sin_port);
-	// serv_addr.sin_port = htons(serv_addr.sin_port);
-	uint32_t ip_addr = htonl(serv_addr.sin_addr.s_addr);
-	// serv_addr.sin_addr.s_addr = htonl(serv_addr.sin_addr.s_addr);
+void convert_to_NBO(struct sockaddr_in * serv_addr) {
+	uint16_t port_no = htons(serv_addr->sin_port);
+
+	// update the port no in the NBO in the serv_addr structure
+	serv_addr->sin_port = port_no;
+
+	uint32_t ip_addr = htonl(serv_addr->sin_addr.s_addr);
+	// update the IPA in the NBO in the serv_addr structure
+	serv_addr->sin_addr.s_addr = ip_addr;
+	
 	printf("\nConversion to NBO:\nIPA: %d\nPort no: %d\n", ip_addr, port_no);
 }
 
@@ -62,7 +67,7 @@ int main(int argc, char **argv) {
 	// display the ip address already populated in serv_addr
 	display_ipaddr(serv_addr);
 
-	convert_to_NBO(serv_addr);
+	convert_to_NBO(&serv_addr);
 	convert_to_HBO(serv_addr);
 	return 0;
 }
