@@ -12,20 +12,26 @@
 #define SERV_PORT 13 
 #define MAXLINE 4096                 
 
+struct sockaddr_in servaddr;
 void str_cli(FILE *fp, int sockfd) {
-	char sendline[MAXLINE], recvline[MAXLINE];
-    if (read(sockfd, recvline, MAXLINE) == 0) {
-        perror("str_cli: server terminated prematurely");
-    }
-    fputs(recvline, stdout);
+	int recvd, serv_size;
+
+	// create a buffer to store the data received from server
+	char recv_data[MAXLINE];
+	
+	// type cast the above buffer to (char *) pointer for correct syntax
+	if ((recvd = recvfrom(sockfd, (char *)recv_data, MAXLINE, MSG_WAITALL, (struct sockaddr *) &servaddr, &serv_size)) == -1) {
+		perror("No data received from server");
+		exit(0);
+	}
+	recv_data[recvd] = '\0';
+	printf("Response from the server: %s", recv_data);
 }
 
 // function to display the ip address and port number of the server
 int show_server_details(struct sockaddr_in serv_addr) {
 	uint16_t port_no = ntohs(serv_addr.sin_port);
-	// char *ip;
-	// ip = inet_ntoa(serv_addr.sin_addr);
-
+	
 	struct hostent *host;
 	host = gethostbyaddr(&serv_addr.sin_addr, sizeof(serv_addr.sin_addr), AF_INET);
 	if (!host) {
@@ -39,9 +45,7 @@ int show_server_details(struct sockaddr_in serv_addr) {
 int main(int argc, char **argv) {
     // socket descriptor
 	int sockfd;
-    // socket internet address structure
-	struct sockaddr_in servaddr, cliaddr;
-    
+
 	if (argc != 2) {
 		perror("usage: udpcli <IPaddress>");
 		exit(0);
@@ -59,22 +63,14 @@ int main(int argc, char **argv) {
 	inet_pton(AF_INET, argv[1], &servaddr.sin_addr);
 	// servaddr.sin_addr.s_addr = INADDR_ANY;
 
-	// connect(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr));
-	// there will be no connect call now, instead we will use recvfrom calls
-
-	char *hello = "Hello from client"; 
-	sendto(sockfd, (const char *)hello, strlen(hello), MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr)); 
-    printf("Hello message sent.\n"); 
-
-	int recvd, serv_size;
-	char *recv_data;
-	if ((recvd = recvfrom(sockfd, recv_data, MAXLINE, MSG_WAITALL, (struct sockaddr *) &servaddr, &serv_size)) == -1) {
-		perror("No data received from server");
-		exit(0);
-	}
+	// there will be no connect call now, instead we will use sendto and recvfrom call
 
 	if (show_server_details(servaddr) == 1) {
-		str_cli(stdin, sockfd);		/* do it all */
+		// send a hello message to the server
+		char *hello = "Hello from client"; 
+		sendto(sockfd, (const char *)hello, strlen(hello), MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr)); 
+	    printf("Hello message sent to the server.\n"); 
+		str_cli(stdin, sockfd);
 	};
 
 	close(sockfd);
