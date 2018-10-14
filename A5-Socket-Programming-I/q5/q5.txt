@@ -1,0 +1,4 @@
+Usage:
+./host2ip <hostname1 hostname2 hostname3 ... >
+
+./ip2host <IPA1 IPA2 IPA3 ... >

@@ -10,7 +10,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-#define SERV_PORT 9339
+#define SERV_PORT 13
 #define MAXLINE 4096
 
 // function to display the allocated IPA and the port number
@@ -19,6 +19,7 @@ void print_allocated_addr (int sockfd, struct sockaddr_in my_addr) {
     // int getsocketname(int sockfd, struct sockaddr * addr, socklen_t * addrlen)
 
 	char ip[16];
+
     uint16_t port_no;
 
     //////////////////////////////////////////////////////

@@ -1,0 +1,4 @@
+Usage:
+./tcpcli <IPA>
+
+./udpcli <IPA>

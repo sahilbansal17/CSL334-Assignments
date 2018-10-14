@@ -1,0 +1,4 @@
+Usage:
+./tcpiterserv &
+
+./tcpcli <IPA>

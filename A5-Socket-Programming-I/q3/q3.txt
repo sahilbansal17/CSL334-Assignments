@@ -1,0 +1,4 @@
+Usage:
+./checkBO
+
+./convertip <IP address>

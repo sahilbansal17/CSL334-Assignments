@@ -10,7 +10,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-#define SERV_PORT 9339
+#define SERV_PORT 13
 #define MAXLINE 4096
 
 // function to display the ip address populated in the serv_addr structure
