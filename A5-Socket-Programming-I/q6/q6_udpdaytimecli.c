@@ -37,19 +37,29 @@ int main(int argc, char **argv) {
     // socket descriptor
 	int sockfd;
     // socket internet address structure
-	struct sockaddr_in servaddr;
+	struct sockaddr_in servaddr, cliaddr;
     
 	if (argc != 2)
 		perror("usage: daytimecli1 <IPaddress>");
 
-	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	// change SOCK_STREAM to SOCK_DGRAM for using UDP instead of TCP
+	if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == 0) {
+		perror("Socket creation error!");
+	}
 
 	bzero(&servaddr, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_port = htons(SERV_PORT);
 	inet_pton(AF_INET, argv[1], &servaddr.sin_addr);
 
-	connect(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr));
+	// connect(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr));
+	// there will be no connect call now, instead we will use recvfrom calls
+
+	ssize_t recvd;
+	socklen_t serv_size; 
+	char *recv_data;
+	if ((recvd = recvfrom(sockfd, recv_data, MAXLINE, 0, (struct sockaddr *) &servaddr, &serv_size)) == -1)
+		perror("No data received from server: ");
 
 	show_server_details(servaddr);
 	str_cli(stdin, sockfd);		/* do it all */

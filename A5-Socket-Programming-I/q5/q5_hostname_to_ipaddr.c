@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
 		host = gethostbyname(argv[i]);
 
 		if (!host) {
-	        printf("Lookup Failed: %s\n", hstrerror(h_errno));
+	        printf("Lookup Failed: %s\n", hsterror(h_errno));
 	        return 0;
 		}
 		printf("host_name: %s\n", host->h_name);

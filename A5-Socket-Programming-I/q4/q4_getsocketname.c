@@ -17,15 +17,27 @@
 void print_allocated_addr (int sockfd, struct sockaddr_in my_addr) {
     // prototype for the getsocket name function is:
     // int getsocketname(int sockfd, struct sockaddr * addr, socklen_t * addrlen)
+
+	char ip[16];
+    uint16_t port_no;
+
+    //////////////////////////////////////////////////////
+    printf("\nBefore getsockname call:\n");
+    inet_ntop(AF_INET, &my_addr.sin_addr, ip, sizeof(ip));
+    port_no = ntohs(my_addr.sin_port);
+
+    printf("The allocated IPA is: %s\n", ip);
+    printf("The allocated port no. is: %d\n", port_no);
+
     int sock_name;
     socklen_t my_addr_len = sizeof(my_addr);
     if ((sock_name = getsockname(sockfd, (struct sockaddr *) &my_addr, &my_addr_len)) == -1) {
         perror("Error in getsockname");
     } 
 
-    char ip[16];
-    uint16_t port_no;
-
+    /////////////////////////////////////////////////////
+	printf("\nAfter getsockname call:\n");
+    
     inet_ntop(AF_INET, &my_addr.sin_addr, ip, sizeof(ip));
     port_no = ntohs(my_addr.sin_port);
 
@@ -58,7 +70,7 @@ int main(int argc, char **argv) {
 
 	// populate the fields in the serv_addr structure
 	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = SERV_PORT;
+	serv_addr.sin_port = htons(SERV_PORT);
 	inet_pton(AF_INET, argv[1], &serv_addr.sin_addr);
 
 	// display the client address before the connect call is issued
@@ -66,7 +78,9 @@ int main(int argc, char **argv) {
     print_allocated_addr (sockfd, cli_addr);
 
 	// connect to the server
-	connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr));
+	if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) == -1) {
+		perror("Connect error");
+	};
 
 	printf("\nAfter the connect call:\n");
 	// display the client address after the connect call is issued

@@ -24,20 +24,20 @@ int main(int argc, char **argv) {
 
 	for (int i = 1; i < argc; i ++) {
 		// prototype:
-		// struct hostent *gethostbyaddr (const char *addr, size_t len, int family)
+		// struct hostent *gethostbyaddr (const void *addr, size_t len, int family)
 		struct in_addr ipa;
 		inet_aton(argv[i], &ipa);
 		host = gethostbyaddr(&ipa, sizeof(ipa), AF_INET);
+
+		if (!host) {
+	        printf("Lookup Failed: %s\n", hstrerror(h_errno));
+	        return 0;
+		}
 
 		int j = 0;
 		while(host->h_addr_list[j] != NULL) {
 	        printf("host_addr_list[%d]: %s\n", j, inet_ntoa( (struct in_addr) * (struct in_addr *)host->h_addr_list[j] ) );
 	        j++;
-		}
-
-		if (!host) {
-	        printf("Lookup Failed: %s\n", hstrerror(h_errno));
-	        return 0;
 		}
 		printf("host_name: %s\n\n", host->h_name);
 
