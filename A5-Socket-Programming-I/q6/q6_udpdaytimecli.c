@@ -1,8 +1,3 @@
-/* This client daytime program is supposed to be the first to be demonstrated amongst all the daytime client servers. 
-This uses the default port no 13 on the server for the daytime service. The client then attempts to connect to port no 13
-on the server, gets the daytime and prints it on the screen and terminates. Note that you may get permission errors with 
-this code */
-
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -26,11 +21,19 @@ void str_cli(FILE *fp, int sockfd) {
 }
 
 // function to display the ip address and port number of the server
-void show_server_details(struct sockaddr_in serv_addr) {
+int show_server_details(struct sockaddr_in serv_addr) {
 	uint16_t port_no = ntohs(serv_addr.sin_port);
-	char *ip;
-	ip = inet_ntoa(serv_addr.sin_addr);
-	printf("Port no: %d, IPA: %s\n", port_no, ip);
+	// char *ip;
+	// ip = inet_ntoa(serv_addr.sin_addr);
+
+	struct hostent *host;
+	host = gethostbyaddr(&serv_addr.sin_addr, sizeof(serv_addr.sin_addr), AF_INET);
+	if (!host) {
+		printf("Kindly enter IP address instead of host name\n");
+		return 0;
+	}
+	printf("Port no: %d, Hostname: %s\n", port_no, host->h_name);
+	return 1;
 }
 
 int main(int argc, char **argv) {
@@ -39,31 +42,41 @@ int main(int argc, char **argv) {
     // socket internet address structure
 	struct sockaddr_in servaddr, cliaddr;
     
-	if (argc != 2)
-		perror("usage: daytimecli1 <IPaddress>");
+	if (argc != 2) {
+		perror("usage: udpcli <IPaddress>");
+		exit(0);
+	}
 
 	// change SOCK_STREAM to SOCK_DGRAM for using UDP instead of TCP
 	if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == 0) {
 		perror("Socket creation error!");
+		exit(0);
 	}
 
 	bzero(&servaddr, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_port = htons(SERV_PORT);
 	inet_pton(AF_INET, argv[1], &servaddr.sin_addr);
+	// servaddr.sin_addr.s_addr = INADDR_ANY;
 
 	// connect(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr));
 	// there will be no connect call now, instead we will use recvfrom calls
 
-	ssize_t recvd;
-	socklen_t serv_size; 
+	char *hello = "Hello from client"; 
+	sendto(sockfd, (const char *)hello, strlen(hello), MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr)); 
+    printf("Hello message sent.\n"); 
+
+	int recvd, serv_size;
 	char *recv_data;
-	if ((recvd = recvfrom(sockfd, recv_data, MAXLINE, 0, (struct sockaddr *) &servaddr, &serv_size)) == -1)
-		perror("No data received from server: ");
+	if ((recvd = recvfrom(sockfd, recv_data, MAXLINE, MSG_WAITALL, (struct sockaddr *) &servaddr, &serv_size)) == -1) {
+		perror("No data received from server");
+		exit(0);
+	}
 
-	show_server_details(servaddr);
-	str_cli(stdin, sockfd);		/* do it all */
+	if (show_server_details(servaddr) == 1) {
+		str_cli(stdin, sockfd);		/* do it all */
+	};
 
+	close(sockfd);
 	exit(0);
-    return 0;
 }

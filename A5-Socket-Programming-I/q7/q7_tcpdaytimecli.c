@@ -9,17 +9,37 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-#define SERV_PORT 13 
+#define SERV_PORT 9908 
 #define MAXLINE 4096                 
 
+// this function sends a request to the server to give the daytime 
+// and in response gets the daytime
+// exit when server responds with "Exit"
 void str_cli(FILE *fp, int sockfd) {
-	char sendline[MAXLINE], recvline[MAXLINE];
-    if (read(sockfd, recvline, MAXLINE) == 0) {
-        perror("str_cli: server terminated prematurely");
-        return ;
-    }
-    fputs(recvline, stdout);
-}
+	char buff[MAXLINE]; 
+    int n; 
+    for ( ; ; ) { 
+        bzero(buff, sizeof(buff)); 
+        printf("Enter any character except \"0\" to get the daytime : "); 
+        n = 0; 
+        while ((buff[n++] = getchar()) != '\n') ; 
+
+        // write to sockfd
+        write(sockfd, buff, sizeof(buff)); 
+
+        // clear the buffer and read from sockfd the response by the server
+        bzero(buff, sizeof(buff)); 
+        read(sockfd, buff, sizeof(buff)); 
+
+        if ((strncmp(buff, "Exit", 4)) == 0) { 
+            printf("You chose to quit...\n"); 
+            break; 
+        } 
+
+        // print the daytime
+        printf("Day time response from the server : %s", buff);
+    } 
+} 
 
 // function to display the ip address and port number of the server
 int show_server_details(struct sockaddr_in serv_addr) {
@@ -56,8 +76,9 @@ int main(int argc, char **argv) {
 	bzero(&servaddr, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_port = htons(SERV_PORT);
-	inet_pton(AF_INET, argv[1], &servaddr.sin_addr);
-
+	// inet_pton(AF_INET, argv[1], &servaddr.sin_addr);
+	servaddr.sin_addr.s_addr = inet_addr("127.0.0.1"); 
+	
 	if ((connect(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr))) == -1) {
 		perror("Connect error"); 
 		exit(0);
