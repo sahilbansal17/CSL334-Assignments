@@ -44,7 +44,7 @@ void str_daytime(FILE *fp, int sockfd) {
 // function to display the ip address and port number of the server
 int show_server_details(struct sockaddr_in serv_addr) {
 	uint16_t port_no = ntohs(serv_addr.sin_port);
-	
+
 	struct hostent *host;
 	host = gethostbyaddr(&serv_addr.sin_addr, sizeof(serv_addr.sin_addr), AF_INET);
 	if (!host) {
@@ -61,39 +61,30 @@ int main(int argc, char **argv) {
     // socket internet address structure
 	struct sockaddr_in servaddr;
     
-    // usage for the program
 	if (argc != 2) {
 		perror("usage: tcpcli <IPaddress>");
 		exit(0);
 	}
 
-	// the socket call to get the socket descriptor for the client
 	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
 		perror("Socket creation error!");
 		exit(0);
 	}
 
-	// zeroise the servaddr structure
 	bzero(&servaddr, sizeof(servaddr));
-
-	// populate the fields of sockaddr
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_port = htons(SERV_PORT);
-	// convert IP from ASCII to NBO and also populate in the servaddr.sin_addr field 
-	inet_pton(AF_INET, argv[1], &servaddr.sin_addr);
+	inet_pton(AF_INET, argv[1], &servaddr.sin_addr); 
 	
-	// connect to the server
 	if ((connect(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr))) == -1) {
 		perror("Connect error"); 
 		exit(0);
 	}
 
-	// show the hostname and the port number of the server
 	if (show_server_details(servaddr) == 1) {
-		str_daytime(stdin, sockfd);		
+		str_daytime(stdin, sockfd);
 	}
 
-	// close the socket descriptor
 	close(sockfd);
     return 0;
 }
