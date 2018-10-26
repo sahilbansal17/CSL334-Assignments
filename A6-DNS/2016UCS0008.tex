@@ -254,4 +254,39 @@ The query in packet \#22 is used to get the IPA of the hostname \textbf{mit.edu}
 
 The packet \#23 contains the response of the packet \#22. The flags set in this are response, recursion desired and authoritative. Yes, it has the answer the user wants. It provides the IPA of the hostname \textbf{mit.edu}.
 
+\section{Using dig command:}
+
+\subsection{:}
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 300pt, keepaspectratio]{Snapshots/q4/4_1.png}
+\end{figure}
+The dig command used to determine the authoritative DNS servers for \textit{mit.edu} is: \textbf{dig mit.edu NS} as highlighted. 
+
+\subsection{:}
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 350pt, keepaspectratio]{Snapshots/q4/4_2.png}
+\end{figure}
+The command used to determine the authoritative DNS servers for \textit{www.du.edu} and \textit{ritchieschool.du.edu} in a single dig command is: \textbf{dig www.du.edu ritchieschool.du.edu NS}. \\
+
+Since it does not provide any answer resource record of type NS, we run the command \textbf{dig +trace www.du.edu ritchieschool.du.edu} to see the complete execution of the DNS request. 
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 400pt, keepaspectratio]{Snapshots/q4/4_2_1.png}
+\end{figure}
+
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 400pt, keepaspectratio]{Snapshots/q4/4_2_2.png}
+\end{figure}
+
+As we can see from this, the DNS servers are the same for both.
+\subsection{:}
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 450pt, keepaspectratio]{Snapshots/q4/4_3.png}
+\end{figure}
+We can infer from this output that the DNS request first goes to the root servers, then it goes to the .edu TLD servers and then finally the authoritative name servers for mit.edu. 
+
 \end{document}
