@@ -164,4 +164,94 @@ The response from the DNS server for the query sent in packet \#160, as shown in
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\section{SET 3: Using the DNS\_3.pcapng:}
+
+\subsection{:}
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 45pt, keepaspectratio]{Snapshots/q3/3_1.png}
+\end{figure}
+The DNS query in packet \#1 is sent to the IPA $192.168.0.1$. It is a local DNS server.
+
+\subsection{:}
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 45pt, keepaspectratio]{Snapshots/q3/3_2.png}
+\end{figure}
+The DNS query in packet \#2 is sent to the IPA $205.171.2.25$. It is a local DNS server.
+
+
+\subsection{:}
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 40pt, keepaspectratio]{Snapshots/q3/3_3_1.png}
+\end{figure}
+
+Packet \#5 contains the response of the packet sent in the query \#2.
+
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 250pt, keepaspectratio]{Snapshots/q3/3_3_2.png}
+\end{figure}
+
+In the response, we get the IPA of the hostname \textbf{a.root-servers.net} which was what was queried as the type of query is \textbf{A}.
+
+\subsection{:}
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 220pt, keepaspectratio]{Snapshots/q3/3_4_1.png}
+\end{figure}
+
+The difference between query in packet \#2 and packet \#3 is the type of the query. In \#2, query has type \textbf{A} which resolves the IPA in IPv4 whereas in \#3, query has type \textbf{AAAA} which resolves the IPA in IPv6. 
+
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 220pt, keepaspectratio]{Snapshots/q3/3_4_2.png}
+\end{figure}
+
+\subsection{:}
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 250pt, keepaspectratio]{Snapshots/q3/3_5.png}
+\end{figure}
+The query in packet \#8 is used to get the IPA of the hostname \textbf{mit.edu}  as the type of query is \textbf{A}. Since the IPA to which packet is sent is $198.41.0.4$ which was earlier resolved for the hostname \textbf{a.root-servers.net}, also the response in packet \#9 contains the list of .edu TLD servers, thus it is a \textbf{root server}.
+
+\subsection{:}
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 300pt, keepaspectratio]{Snapshots/q3/3_6.png}
+\end{figure}
+
+The packet \#9 contains the response of the query sent in packet \#8. The flags set in this are response and recursion desired. No, it does not have the answer the user wants as the no. of answer RRs = 0. It provides the list of .edu TLD servers. 
+\subsection{:}
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 200pt, keepaspectratio]{Snapshots/q3/3_7.png}
+\end{figure}
+
+TLD server is being queried in the packet \#16. It is thus not a local DNS server. 
+
+\subsection{:}
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 250pt, keepaspectratio]{Snapshots/q3/3_8.png}
+\end{figure}
+Packet \#17 contains the response of the query sent in the packet \#16. The flags set in this are response and recursion desired. No, it does not have the answer the user wants. It provides the information about the authoritative name servers as shown.
+
+\subsection{:}
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 250pt, keepaspectratio]{Snapshots/q3/3_9.png}
+\end{figure}
+
+The query in packet \#22 is used to get the IPA of the hostname \textbf{mit.edu}  as the type of query is \textbf{A}. An authoritative name server is being queried. 
+
+\subsection{:}
+\begin{figure}[H]
+	\vspace{0pt}
+	\includegraphics[height = 250pt, keepaspectratio]{Snapshots/q3/3_10.png}
+\end{figure}
+
+The packet \#23 contains the response of the packet \#22. The flags set in this are response, recursion desired and authoritative. Yes, it has the answer the user wants. It provides the IPA of the hostname \textbf{mit.edu}.
+
 \end{document}
