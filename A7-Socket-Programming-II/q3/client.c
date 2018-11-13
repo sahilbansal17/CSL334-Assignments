@@ -9,34 +9,15 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-#define SERV_PORT 9908 
 #define MAXLINE 4096                 
 
-// this function first sends a hello message to the client
-// and prints the message received from the server 
-// along with the time of the day
-void str_daytime(FILE *fp, int sockfd) {
+void str_hello_world(FILE *fp, int sockfd) {
 	char buff[MAXLINE]; 
-    int n; 
+    bzero(buff, sizeof(buff)); 
     
-    bzero(buff, sizeof(buff)); 
-    n = 0; 
-    // while ((buff[n++] = getchar()) != '\n') ;
-    strcpy(buff, "Hello Server\n"); 
-    printf("Hello message sent to the server.\n"); 
-
-    // write to sockfd
-    write(sockfd, buff, sizeof(buff)); 
-
-    // clear the buffer and read from sockfd the response by the server
-    bzero(buff, sizeof(buff)); 
+	// read message from the server
     read(sockfd, buff, sizeof(buff)); 
     printf("Response from the server: %s\n", buff);
-    
-    // read the daytime response and print to the screen
-    bzero(buff, sizeof(buff));
-    read(sockfd, buff, sizeof(buff));
-    printf("Day time response from the server: %s\n", buff);
 } 
 
 int main(int argc, char **argv) {
@@ -46,8 +27,8 @@ int main(int argc, char **argv) {
 	struct sockaddr_in servaddr;
     
     // usage for the program
-	if (argc != 2) {
-		printf("usage: client <server IPaddress>\n");
+	if (argc != 3) {
+		printf("usage: client <server_IPaddress server_port_number>\n");
 		exit(EXIT_FAILURE);
 	}
 
@@ -62,7 +43,7 @@ int main(int argc, char **argv) {
 
 	// populate the fields of sockaddr
 	servaddr.sin_family = AF_INET;
-	servaddr.sin_port = htons(SERV_PORT);
+	servaddr.sin_port = htons(atoi(argv[2]));
 	// convert IP from ASCII to NBO and also populate in the servaddr.sin_addr field 
 	inet_pton(AF_INET, argv[1], &servaddr.sin_addr);
 	
@@ -72,7 +53,7 @@ int main(int argc, char **argv) {
 		exit(0);
 	}
 
-	str_daytime(stdin, sockfd);		
+	str_hello_world(stdin, sockfd);		
 
 	// close the socket descriptor
 	close(sockfd);
