@@ -13,27 +13,17 @@
 #include <stdlib.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include <net/if.h> // for ifreq structure passed as an argument to ioctl call
+#include <net/if.h> // for ifreq, arpreq structure passed as an argument to ioctl call
 // #include <linux/sockios.h>
- 
-// struct ifreq {
-//     char ifr_name[IFNAMSIZ]; /* Interface name */
-//     union {
-//        struct sockaddr ifr_addr;
-//        struct sockaddr ifr_dstaddr;
-//        struct sockaddr ifr_broadaddr;
-//        struct sockaddr ifr_netmask;
-//        struct sockaddr ifr_hwaddr;
-//        short           ifr_flags;
-//        int             ifr_ifindex;
-//        int             ifr_metric;
-//        int             ifr_mtu;
-//        struct ifmap    ifr_map;
-//        char            ifr_slave[IFNAMSIZ];
-//        char            ifr_newname[IFNAMSIZ];
-//        char           *ifr_data;
-//     };
-// };
+
+struct arpreq {
+    struct sockaddr arp_pa;      /* protocol address */
+    struct sockaddr arp_ha;      /* hardware address */
+    int             arp_flags;   /* flags */
+    struct sockaddr arp_netmask; /* netmask of protocol address */
+    char            arp_dev[16];
+};
+
 
 int main(int argc, char **argv) {
     // socket descriptor
@@ -43,6 +33,9 @@ int main(int argc, char **argv) {
     
     // interface request structure
     struct ifreq ifr; 
+    
+    // arp request structure
+    struct arpreq apr;
     
     // usage for the program
 	if (argc != 2) {
@@ -67,22 +60,23 @@ int main(int argc, char **argv) {
 	// convert IP from ASCII to NBO and also populate in the servaddr.sin_addr field 
 	inet_pton(AF_INET, argv[1], &servaddr->sin_addr);
     
-    // set the IP address in the ifr structure from the sockaddr_in servaddr structure
-	ifr.ifr_addr = *(struct sockaddr *) servaddr;
+    // set the IP address in the apr structure from the sockaddr_in servaddr structure
+	apr.arp_pa = *(struct sockaddr *) servaddr;
     // printf("IPA: %s", inet_ntoa(servaddr->sin_addr));
     
     // int ioctl(int fd, unsigned long request, ...);
     // first argument: socket descriptor
-    // second argument: device-dependent request code, for getting MAC address: SIOCGIFHWADDR
-    // third argument: generally a pointer to ifr structure
+    // second argument: device-dependent request code, for getting MAC address: SIOCGARP
+    // third argument: generally a pointer to ifr structure or apr structure
     
-    if (ioctl(sockfd, SIOCGIFHWADDR, &ifr) == -1) {
+    if (ioctl(sockfd, SIOCGARP, &apr) == -1) {
         perror("Error in ioctl call: ");
         exit(EXIT_FAILURE);
     }
     
     u_int8_t hw_addr[6]; // 6 integers to represent 6 bytes of MAC address
-    memcpy(hw_addr, ifr.ifr_hwaddr.sa_data, sizeof(hw_addr));
+    // memcpy(hw_addr, ifr.ifr_hwaddr.sa_data, sizeof(hw_addr));
+    memcpy(hw_addr, apr.arp_ha.sa_data, sizeof(hw_addr));
     printf("Hardware address: ");
     for (int i = 0; i < 6; i ++) {
         if (i != 5)
