@@ -20,6 +20,22 @@
 #define MAXLINE 1024
 #define LISTENQ 10
 
+long int findSize(char *file_name) {
+	 
+    // opening the file in read mode 
+    FILE* fp = fopen(file_name, "r"); 
+  
+    fseek(fp, 0L, SEEK_END); 
+  
+    // calculating the size of the file 
+    long int res = ftell(fp); 
+  
+    // closing the file 
+    fclose(fp); 
+  
+    return res; 
+} 
+
 void ftp_handle(int sockfd) {
 
 	char buff[MAXLINE], file_data[MAXLINE]; 
@@ -51,26 +67,22 @@ void ftp_handle(int sockfd) {
 		}
 		else {
 			// find the size of the file
-			// int size = 0;
-			// fseek(fp, 0, 2);
-			// size = ftell(fp);
-			// fclose(fp);
+			// int size = findSize(file_name);
+			// 
+			// if (size > 1024) {
+			// 	bzero(buff, MAXLINE);
+			// 	strcpy(buff, "File Size Greater Than 1 KB\n");
+			// 	write(sockfd, buff, sizeof(buff));
+			// 	bzero(buff, MAXLINE);
+			// 	continue;
+			// }
 			
 			int n;
-			
-            if ( (n = read(fd, file_data, sizeof(file_data))) != 0) {
-				// size > 1024 bytes
-				bzero(buff, MAXLINE);
-				strcpy(buff, "File Size Greater Than 1 KB\n");
-				write(sockfd, buff, sizeof(buff));
-				bzero(buff, MAXLINE);
-				continue;
+            while ( (n = read(fd, file_data, sizeof(file_data))) != 0) {
+	            write(sockfd, file_data, sizeof(file_data));
+	            bzero(file_data, sizeof(file_data));
             }
 			close(fd);
-			
-			// otherwise file size <= 1024 bytes
-            write(sockfd, file_data, sizeof(file_data));
-            bzero(file_data, sizeof(file_data));
 		}
 	}
 }
