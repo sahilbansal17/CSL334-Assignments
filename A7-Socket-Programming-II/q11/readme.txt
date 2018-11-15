@@ -1,6 +1,6 @@
 Execution of the web client:
 
-$ gcc -o client client.c
+$ gcc -w -o client client.c
 $ ./client host_name port_number method file_name
 
 e.g. : 
