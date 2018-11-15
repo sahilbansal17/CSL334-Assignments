@@ -11,27 +11,8 @@
 #include <fcntl.h>
 
 #define SERVPORT 9908
-#define MAXLINE 4096
+#define MAXLINE 1024
 #define LISTENQ 10
-
-// funtion to send file 
-int sendFile(FILE* fp, char* buf, int s) 
-{ 
-    int i, len; 
-    if (fp == NULL) { 
-        strcpy(buf, "\0"); 
-        return 1; 
-    } 
-  
-    char ch; 
-    for (i = 0; i < s; i++) { 
-        ch = fgetc(fp);  
-        buf[i] = ch; 
-        if (ch == EOF) 
-            return 1; 
-    } 
-    return 0; 
-} 
 
 // function to process the http request of the client
 void http_handle(int sockfd) {
@@ -39,14 +20,11 @@ void http_handle(int sockfd) {
 	char request[MAXLINE], response[MAXLINE], file_data[MAXLINE], buffer[MAXLINE]; 
     bzero(request, MAXLINE); 
     bzero(response, MAXLINE);
-    bzero(file_data, MAXLINE);
     bzero(buffer, MAXLINE);
+    bzero(file_data, MAXLINE);
     // read the http request from the client
     read(sockfd, request, sizeof(request)); 
     
-    // print the HTTP request 
-    // printf("HTTP Request:\n%s\n", request); 
-   
     // process the HTTP request
     
     // STEP 1: Extract the first line of the request and then the 
@@ -77,70 +55,43 @@ void http_handle(int sockfd) {
     if (strcmp(method, "GET") == 0 && strcmp(version, "HTTP/1.1") == 0) {
         // get the requested file
         file_name = strtok(url, "/");
-        // printf("\nFILE NAME: %s\n", file_name);
-        
-        FILE *fp = fopen(file_name, "r");
-        if (fp == NULL) {
-            status_code = 404;
-        }
-        else {
-            status_code = 200;
-            
-            // copy file into file_data
-            int s = sendFile(fp, file_data, MAXLINE);
-            
-            /* Sending file using fgets */
-            // while (fgets(buffer, sizeof(buffer), fp)) {
-            //     strcat(file_data, buffer);
-            //     strcat(file_data, "\n");
-            // }
-            // strcat(file_data, "\0");
-            
-            /* Sending file using read function */
-            // off_t file_length = lseek(fd, 0, SEEK_END);
-            // lseek(fd, 0, SEEK_SET);
-            // file_data = malloc(file_length);
-            // if (file_data) {
-            //     read(fd, file_data, sizeof(file_data));
-            // }
-            // else {
-            //     printf("\nFile read error\n");
-            // }
-            
-            /* Sending file using fread function */
-            // fseek(fp, 0, SEEK_END);
-            // length = ftell(fp);
-            // fseek(fp, 0, SEEK_SET);
-            // file_data = malloc(length + 1);
-            // if (file_data) {
-            //     fread(file_data, 1, length, fp);
-            //     printf("\n FILE READ \n");
-            //     file_data[length] = '\0';
-            // }
-            // else {
-            //     printf("\nFile Read error.\n");
-            // }
-            // fclose(fp);
-        }
-        
+    
         // STEP 3: Create an HTTP response containing the requested file
         // preceded by header lines
         
         strcat(response, version);
         strcat(response, " ");
-        if (status_code == 200) {
-            strcat(response, "200 OK\r\n");
-        }
-        else if (status_code == 404){
+        
+        int fd = open(file_name, O_RDONLY);
+        if (fd < 0) {
+            status_code = 404;
             strcat(response, "404 Not Found\r\n");
+            strcat(response, "Content-Type: text/plain\r\n\r\n");
+            // send the http response to the client 
+            strcat(response, "404 NOT FOUND\r\n");
+            write(sockfd, response, sizeof(response)); 
         }
-        strcat(response, "Content-Type: text/plain\r\n\r\n");
-        strcat(response, file_data);
-        // send the http response to the client 
-        write(sockfd, response, sizeof(response)); 
+        else {
+            status_code = 200;
+            
+            strcat(response, "200 OK\r\n");
+            strcat(response, "Content-Type: text/plain\r\n\r\n");
+            // send the http response to the client 
+            write(sockfd, response, sizeof(response)); 
+            
+            /* read and send the content simultaneously */
+            int n;
+            while ( (n = read(fd, file_data, sizeof(file_data))) != 0) {
+                write(sockfd, file_data, sizeof(file_data));
+                bzero(file_data, sizeof(file_data));
+            }
+			close(fd);
+        }
     }
     else {
         printf("Not a valid GET request!\n");
+        strcpy(buffer, "Invalid request.");
+        write(sockfd, buffer, sizeof(buffer));
     }
 }
 
